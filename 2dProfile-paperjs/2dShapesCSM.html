@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head> 
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">    
+		
+		<title>SmarTeam3D - 3D world closer to you| SmarTeam3D</title>
+		<meta name="description" content="3D world closer to you | car/character customization,real reproduction of objects,from simple to complex animations,3D image and video rendering">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />    
+		<meta name="keywords"  content="3d,webgl,rendering,animation,modeling, games" />
+		
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="theme-color" content="#ffffff">
+		 
+		<style>
+			html, body {
+				margin: 0; 
+				padding: 0;
+				overflow: hidden;
+			} 
+			#canvas {
+				height: 400px; width: 500px; background-color: rgba(255,255,255,0); border:1px solid blue;
+			} 
+		</style>
+		
+		<script src="https://code.jquery.com/jquery.js"></script>  
+		<script src="./paper.js"></script> 
+	</head>  
+	<body>   
+		<div>
+			<button><a href="./2dShapes.html" target="_blank">U-Profile</a></button>
+			<button><a href="./2dShapesL.html" target="_blank">L-Profile</a></button>
+			<button><a href="./2dShapesC.html" target="_blank">C-Profile</a></button>
+			<button><a href="./2dShapesZ.html" target="_blank">Z-Profile</a></button>
+			<button><a href="./2dShapesO.html" target="_blank">O-Profile</a></button>
+			<button><a href="./2dShapesCSM.html" target="_blank">CSM-Profile</a></button>
+			<button><a href="./2dShapesS.html" target="_blank">Custom</a></button>
+		</div>
+		<canvas id="canvas"></canvas> 		
+		<div class="menu">
+			<label class="switch">
+			  <input type="checkbox" id="inside" checked/> 
+			  <span class="inside">Inside</span>
+			</label>
+			<label class="switch">
+			  <input type="checkbox" id="outside"/>
+			  <span class="inside">Outside</span>
+			</label> 
+			<div class="length">
+				<label class="switch">
+					<span class="inside">A:</span>
+					<input id="lengthA" type="text" name="lengthA" value="25"  >
+				</label>
+				<label class="switch">
+					<span class="inside">B:</span>
+					<input id="lengthB" type="text" name="lengthB" value="45" />
+				</label> 
+				
+				<label class="switch"> 
+					<span class="inside">C:</span>
+					<input id="lengthC" type="text" name="lengthC" value="40" >
+				</label> 
+			</div>
+			<div class="length">
+				<label class="switch"> 
+					<span class="inside">D:</span>
+					<input id="lengthD" type="text" name="lengthD" value="20" >
+				</label> 
+				<label class="switch"> 
+					<span class="inside">E:</span>
+					<input id="lengthE" type="text" name="lengthE" value="15" >
+				</label> 
+				<label class="switch"> 
+					<span class="inside">F:</span>
+					<input id="lengthF" type="text" name="lengthF" value="20" >
+				</label> 
+				<label class="switch">
+					<span class="inside">1:</span>
+					<input id="angle1" type="number" name="angle1" value="135" >
+				</label>
+			</div>
+			<div class="angle">
+				<label class="switch"> 
+					<span class="inside">2:</span>
+					<input id="angle2" type="text" name="angle2" value="135" >
+				</label>
+				<label class="switch">
+					<span class="inside">3:</span>
+					<input id="angle3" type="text" name="angle3" value="90" >
+				</label>
+				<label class="switch">
+					<span class="inside">4:</span>
+					<input id="angle4" type="text" name="angle4" value="135" >
+				</label> 
+				<label class="switch">
+					<span class="inside">5:</span>
+					<input id="angle5" type="text" name="angle5" value="135" >
+				</label>
+			</div>
+			<div class="others">
+				<label class="switch">
+					<span class="inside">thickness</span>
+					<input id="stroke" type="text" name="stroke" value="5" >
+				</label>
+				<label class="switch">
+					<button id="zoomin" type="text" name="zoomin">Zoom in</button>
+				</label>
+				<label class="switch">
+					<button id="zoomout" type="text" name="zoomout">Zoom out</button>
+				</label>
+				<label class="switch">
+					<button id="rotate" type="text" name="rotate">Rotate +90</button>
+				</label>
+				<label class="switch">
+					<button id="addExtra" type="text" name="addExtra">addExtra</button>
+				</label>
+				<label class="switch">
+					<button id="remExtra" type="text" name="remExtra">remExtra</button>
+				</label>
+			</div> 
+			<div class="extra" id="extra_1" style="display:none;">
+				<label class="switch"> 
+					<span class="inside">G:</span>
+					<input id="lengthG" type="text" name="lengthG" value="0" >
+				</label> 
+				<label class="switch">
+					<span class="inside">6:</span>
+					<input id="angle6" type="text" name="angle6" value="0" >
+				</label>
+			</div>
+			<div class="extra" id="extra_2" style="display:none;">
+				<label class="switch"> 
+					<span class="inside">H:</span> 
+					<input id="lengthH" type="text" name="lengthH" value="0" >
+				</label> 
+				<label class="switch">
+					<span class="inside">7:</span>
+					<input id="angle7" type="text" name="angle7" value="0" >
+				</label>
+			</div>
+		</div> 
+		
+		<script type="text/paperscript" canvas="canvas">
+			
+			var profile = 6;
+			var strokeWidth = 5;
+			var angle1 = angle2 = angle4 = angle5 = 135
+			var angle3 = 90; 
+			var lengthB = 50;
+			var lengthD = lengthF = 22.5;
+			var lengthC = 45;  
+			var lengthA = 27.5;
+			var lengthE = 17.5;
+			
+			var dotRadius = 5;
+			
+			var infoOffset = 10;
+			var viewAngle = 0;
+			var lastPoint;  
+			
+			var extra = 0;  
+			var lengthG = lengthH = 0; 
+			var angle6 = angle7 = 0;   
+			
+			function draw(profile)
+			{
+				switch(profile){
+					case 1:
+						draw_U();
+						break;
+					case 2:
+						draw_L();
+						break;
+					case 3:
+						draw_C();
+						break;
+					case 4:
+						draw_Z();
+						break;
+					case 5:
+						draw_O();
+						break;
+					case 6:
+						draw_CSM();
+						break;
+				}
+				
+				view.zoom /=1.4;
+				
+				//for resize
+				lastPoint= view.center; 
+			}
+			
+			function draw_U(){
+				
+			}
+			
+			function draw_CSM(){
+				//points
+				var point0 = new Point(0, 0); 
+				var point1 = new Point(lengthB, 0);
+				var point2 = new Point(lengthB/2, 0);
+				var point3 = new Point(lengthB + lengthC/2, 0);
+				var point4 = new Point(-lengthA/2, 0); 
+				
+				//extraPoints
+				var point5 = new Point(lengthB + lengthC + lengthD/2, 0);
+				var point6 = new Point(lengthB + lengthC, 0);
+				var point7 = new Point(lengthB + lengthC + lengthD + lengthE/2, 0);
+				var point8 = new Point(lengthB + lengthC + lengthD, 0);
+				var point9 = new Point(lengthB + lengthC + lengthD + lengthE + lengthF/2, 0);
+				var point10 = new Point(lengthB + lengthC + lengthD + lengthE, 0);
+				var point11 = new Point(lengthB + lengthC + lengthD + lengthE + lengthF + lengthG/2, 0);
+				var point12 = new Point(lengthB + lengthC + lengthD + lengthE + lengthF, 0);
+				var point13 = new Point(lengthB + lengthC + lengthD + lengthE + lengthF + lengthG + lengthH/2, 0);
+				var point14 = new Point(lengthB + lengthC + lengthD + lengthE + lengthF + lengthG, 0);
+			
+				//shapes
+				var midle = drawShapes(point2, new Point(lengthB, strokeWidth), 'rect');
+				var rightCorner = drawShapes(point1, strokeWidth/2, 'circle');
+				var right = drawShapes(point3, new Point(lengthC, strokeWidth), 'rect');
+				var leftCorner = drawShapes(point0, strokeWidth/2, 'circle');
+				var left = drawShapes(point4, new Point(lengthA, strokeWidth), 'rect');
+				
+				//extraShapes
+				var extra_1R = drawShapes(point5, new Point(lengthD, strokeWidth), 'rect');
+				var extra_1RC = drawShapes(point6, strokeWidth/2, 'circle');
+				var extra_2R = drawShapes(point7, new Point(lengthE, strokeWidth), 'rect');
+				var extra_2RC = drawShapes(point8, strokeWidth/2, 'circle');
+				var extra_3R = drawShapes(point9, new Point(lengthF, strokeWidth), 'rect');
+				var extra_3RC = drawShapes(point10, strokeWidth/2, 'circle');
+				var extra_4R = drawShapes(point11, new Point(lengthG, strokeWidth), 'rect');
+				var extra_4RC = drawShapes(point12, strokeWidth/2, 'circle');
+				var extra_5R = drawShapes(point13, new Point(lengthH, strokeWidth), 'rect');
+				var extra_5RC = drawShapes(point14, strokeWidth/2, 'circle');
+				
+				//infoDots
+				var angle1Info = drawInfos(new Point(point0.x - infoOffset, infoOffset), '#189AD2', '1');
+				var angle2Info = drawInfos(new Point(point1.x + infoOffset, - infoOffset), '#189AD2', '2');
+				var lengthBmidle = drawInfos(new Point(point2.x, infoOffset), '#F7B328', 'B');
+				var lengthCright = drawInfos(new Point(point3.x, infoOffset), '#F7B328', 'C');
+				var lengthAleft = drawInfos(new Point(point4.x, - infoOffset), '#F7B328', 'A');
+				
+				//extraInfoDots
+				var extra_1RL = drawInfos(new Point(point5.x, infoOffset), '#F7B328', 'D');
+				var extra_1RA = drawInfos(new Point(point6.x + infoOffset, - infoOffset), '#189AD2', '3');
+				var extra_2RL = drawInfos(new Point(point7.x, infoOffset), '#F7B328', 'E');
+				var extra_2RA = drawInfos(new Point(point8.x + infoOffset, - infoOffset), '#189AD2', '4');
+				var extra_3RL = drawInfos(new Point(point9.x, infoOffset), '#F7B328', 'F');
+				var extra_3RA = drawInfos(new Point(point10.x + infoOffset, - infoOffset), '#189AD2', '5');
+				var extra_4RL = drawInfos(new Point(point11.x, infoOffset), '#F7B328', 'G');
+				var extra_4RA = drawInfos(new Point(point12.x + infoOffset, - infoOffset), '#189AD2', '6');
+				var extra_5RL = drawInfos(new Point(point13.x, infoOffset), '#F7B328', 'H');
+				var extra_5RA = drawInfos(new Point(point14.x + infoOffset, - infoOffset), '#189AD2', '7');
+				
+				var groupM = new Group(midle, lengthBmidle);
+				
+				//extraGroups
+				var extra_5group = new Group(extra_5R, extra_5RC, extra_5RL, extra_5RA);
+				setting_group(extra_5group, point14, -180 + angle7, 90 + angle7);
+				extra_5group.visible = (extra > 1 ? true : false); 
+				
+				var extra_4group = new Group(extra_4R, extra_4RC, extra_4RL, extra_4RA, extra_5group);
+				setting_group(extra_4group, point12, -180 + angle6, - angle6);
+				extra_4group.visible = (extra > 0 ? true : false);
+				
+				var extra_3group = new Group(extra_3R, extra_3RC, extra_3RL, extra_3RA, extra_4group);
+				setting_group(extra_3group, point10, -180 + angle5, 90 - angle5);
+								
+				var extra_2group = new Group(extra_2R, extra_2RC, extra_2RL, extra_2RA, extra_3group);
+				setting_group(extra_2group, point8, 180 + angle4, 90 - angle4); 
+				
+				var extra_1group = new Group(extra_1R, extra_1RC, extra_1RL, extra_1RA, extra_2group);
+				setting_group(extra_1group, point6, -180 + angle3, -180 - angle3);
+				
+				var groupR = new Group(rightCorner, right, angle2Info, lengthCright, extra_1group);
+				setting_group(groupR, point1, -180 + angle2, -180 - angle2);
+				
+				//extraRotation
+				groupR.children[4].children[2].rotate(-180 - angle2);
+				groupR.children[4].children[3].rotate(-180 - angle2); 
+				extra_1group.children[4].children[2].rotate(180 - angle3 + angle2); 
+				extra_1group.children[4].children[3].rotate(180 - angle3 + angle2); 
+				extra_2group.children[4].children[2].rotate(180 - angle4 + angle3 + angle2);
+				extra_2group.children[4].children[3].rotate(180 - angle4 + angle3 + angle2);
+				extra_3group.children[4].children[2].rotate(180 - angle5 + angle4 + angle3 + angle2);
+				extra_3group.children[4].children[3].rotate(180 - angle5 + angle4 + angle3 + angle2);
+				extra_4group.children[4].children[2].rotate(180 - angle6 + angle5 + angle4 + angle3 + angle2);
+				extra_4group.children[4].children[3].rotate(180 - angle6 + angle5 + angle4 + angle3 + angle2);
+				 
+				var groupL = new Group(leftCorner, left, angle1Info, lengthAleft); 
+				setting_group(groupL, point0, 180 + angle1, 180 - angle1); 
+				
+				var mainGroup = new Group(groupM, groupL, groupR);
+				
+				//main rotation
+				mainGroup.rotate(-135);
+				
+				//adjust rotation because of main rotation
+				groupL.children[2].rotate(135);
+				groupL.children[3].rotate(135);
+				groupM.children[1].children[1].rotate(135);
+				groupR.children[4].children[2].rotate(135);
+				groupR.children[4].children[3].rotate(135); 
+				groupR.children[2].rotate(135);
+				groupR.children[3].rotate(135); 
+				extra_1group.children[4].children[2].rotate(135); 
+				extra_1group.children[4].children[3].rotate(135); 
+				extra_2group.children[4].children[2].rotate(135);
+				extra_2group.children[4].children[3].rotate(135);
+				extra_3group.children[4].children[2].rotate(135); 
+				extra_3group.children[4].children[3].rotate(135); 
+				extra_4group.children[4].children[2].rotate(135);  
+				extra_4group.children[4].children[3].rotate(135);  
+				
+				//fit to canvas
+				mainGroup.fitBounds(view.bounds);
+				
+			}
+			
+			function draw_C(){
+			
+			}
+			
+			function draw_Z(){
+			
+			}
+			
+			function draw_L(){
+			
+			}
+			
+			function draw_O(){
+			
+			}
+			
+			function setting_group(grup, pivot, angle1, angle2){
+				grup.pivot = pivot;
+				grup.rotate(angle1);
+				grup.children[2].rotate(angle2); 
+				grup.children[3].rotate(angle2); 
+			}
+			
+			function drawShapes(center, radiuSize, form){
+				var shape;
+				if(form == 'circle'){
+					shape = new Path.Circle({
+								center    : center,
+								radius    : radiuSize,
+								fillColor : 'black'
+							});
+				}else{
+					shape = new Path.Rectangle({
+								center    : center,
+								size      : radiuSize,
+								fillColor : 'black'
+							});
+				}
+				return shape;
+			}
+			
+			function drawInfos(point, fillC, text){
+				var dot = new Path.Circle({
+					center    : point,
+					radius    : dotRadius,
+					fillColor : fillC
+				});
+				
+				var text = new PointText({
+					point: point,
+					content: text,
+					fillColor: 'white',
+					font: 'Arial' 
+				});
+				text.fitBounds(dot.bounds.scale(0.7));
+				
+				return new Group(dot, text);  
+			}
+			
+			function drawCanvas(){
+				project.clear();
+				draw(profile);
+			}
+			
+			drawCanvas();
+		
+			view.onMouseDrag = function(event){  
+				view.rotate(event.point.subtract(view.center).angle/Math.PI);
+			} 
+				
+			function onMouseWheel(event){
+				var delta = 0;
+				if ( event.wheelDelta )  // WebKit / Opera / Explorer 9
+					delta = event.wheelDelta;
+				else if ( event.detail )  // Firefox
+					delta = - event.detail;
+				if (delta > 0) { // Scroll up
+					view.zoom /= Math.pow( 0.95, 1 );
+				} else { 
+					view.zoom *= Math.pow( 0.95, 1 ); 
+				}
+			} 
+			
+			function onResize(event) {
+				view.scrollBy(lastPoint.subtract(view.center));
+				lastPoint = view.center; 
+			}
+			
+			//zoom events
+			document.getElementById('canvas').addEventListener( 'mousewheel', onMouseWheel, false );
+			document.getElementById('canvas').addEventListener( 'DOMMouseScroll', onMouseWheel, false );
+			
+			//inputs events
+			var $inside = document.getElementById('inside');
+			var $outside = document.getElementById('outside');
+			var $lengthB = document.getElementById('lengthB');
+			var $lengthC = document.getElementById('lengthC');
+			var $lengthA = document.getElementById('lengthA');
+			var $angle1 = document.getElementById('angle1');
+			var $angle2 = document.getElementById('angle2');
+			var $stroke = document.getElementById('stroke');
+			var $zoomin = document.getElementById('zoomin');
+			var $zoomout = document.getElementById('zoomout');
+			var $rotate = document.getElementById('rotate'); 
+			
+			var $addExtra = document.getElementById('addExtra');
+			var $remExtra = document.getElementById('remExtra');
+			
+			var $lengthD = document.getElementById('lengthD');
+			var $angle3 = document.getElementById('angle3');
+			var $lengthE = document.getElementById('lengthE');
+			var $angle4 = document.getElementById('angle4');
+			var $lengthF = document.getElementById('lengthF');
+			var $angle5 = document.getElementById('angle5');
+			var $lengthG = document.getElementById('lengthG');
+			var $angle6 = document.getElementById('angle6');
+			var $lengthH = document.getElementById('lengthH');
+			var $angle7 = document.getElementById('angle7');
+			
+			$angle1.addEventListener("keyup", function(){
+				angle1 = parseFloat(this.value);
+				drawCanvas();
+			}, false);
+			
+			$angle2.addEventListener("keyup", function(){
+				angle2 = parseFloat(this.value);
+				drawCanvas();
+			}, false);
+			
+			$lengthB.addEventListener("keyup", function(){
+				lengthB = ($inside.checked==true ? parseFloat(this.value)+strokeWidth : parseFloat(this.value)-strokeWidth);
+				drawCanvas(); 
+			}, false);  
+			 
+			$lengthC.addEventListener("keyup", function(){
+				lengthC = ($inside.checked==true ? parseFloat(this.value)+strokeWidth : parseFloat(this.value)-strokeWidth);
+				drawCanvas();
+			}, false);
+			
+			$lengthA.addEventListener("keyup", function(){
+				lengthA = ($inside.checked==true ? parseFloat(this.value)+strokeWidth/2 : parseFloat(this.value));
+				drawCanvas(); 
+			}, false);
+			
+			$stroke.addEventListener("keyup", function(){
+				strokeWidth = parseFloat(this.value);
+				$lengthB.value = ($inside.checked==true ? lengthB-strokeWidth : lengthB+strokeWidth);
+				$lengthC.value = ($inside.checked==true ? lengthC-strokeWidth : lengthC+strokeWidth);
+				$lengthD.value = ($inside.checked==true ? lengthD-strokeWidth : lengthD+strokeWidth);
+				$lengthE.value = ($inside.checked==true ? lengthE-strokeWidth/2 : lengthE);
+				$lengthA.value = ($inside.checked==true ? lengthA-strokeWidth/2 : lengthA); 
+				
+				drawCanvas(); 
+			}, false);
+			 
+			$zoomin.onclick = function() { view.zoom /= Math.pow( 0.95, 1 ); }
+			
+			$zoomout.onclick = function() { view.zoom *= Math.pow( 0.95, 1 ); }
+			
+			$rotate.onclick = function() {
+				
+				viewAngle = (viewAngle == 3)?0:viewAngle++;
+				view.rotation = 0;
+				switch(viewAngle){
+					case 0:
+						view.rotate(0, view.center);
+						break;
+					case 1:
+						view.rotate(90, view.center);
+						break;
+					case 2:
+						view.rotate(-180, view.center);
+						break;
+					case 3: 
+						view.rotate(-90, view.center);
+						break;
+				}
+		    }
+			
+			$addExtra.onclick = function() { 
+				if(extra == 2){alert("No more"); return;}
+				extra++;
+				drawCanvas();
+				document.getElementById('extra_'+extra).style.display = "block";
+			}
+			
+			$remExtra.onclick = function() { 
+				if(extra == 0){alert("No more"); return;}
+				document.getElementById('extra_'+extra).style.display = "none";
+				extra--;
+				drawCanvas();
+			}
+			
+			$lengthD.addEventListener("keyup", function(){
+				lengthD = ($inside.checked==true ? parseFloat(this.value)+strokeWidth : parseFloat(this.value)-strokeWidth);
+				drawCanvas(); 
+			}, false);
+			
+			$angle3.addEventListener("keyup", function(){
+				angle3 = parseFloat(this.value);
+				drawCanvas();
+			}, false);
+			
+			$lengthE.addEventListener("keyup", function(){
+				lengthE = ($inside.checked==true ? parseFloat(this.value)+strokeWidth/2 : parseFloat(this.value));
+				drawCanvas(); 
+			}, false);
+			
+			$angle4.addEventListener("keyup", function(){
+				angle4 = parseFloat(this.value);
+				drawCanvas();
+			}, false);
+			
+			$lengthF.addEventListener("keyup", function(){
+				lengthF = parseFloat(this.value);
+				drawCanvas(); 
+			}, false);
+			
+			$angle5.addEventListener("keyup", function(){
+				angle5 = parseFloat(this.value);
+				drawCanvas();
+			}, false);
+			
+			$lengthG.addEventListener("keyup", function(){
+				lengthG = parseFloat(this.value);
+				drawCanvas(); 
+			}, false);
+			
+			$angle6.addEventListener("keyup", function(){
+				angle6 = parseFloat(this.value);
+				drawCanvas();
+			}, false);
+			
+			$lengthH.addEventListener("keyup", function(){
+				lengthH = parseFloat(this.value);
+				drawCanvas(); 
+			}, false);
+			
+			$angle7.addEventListener("keyup", function(){
+				angle7 = parseFloat(this.value);
+				drawCanvas();
+			}, false);
+		
+			$inside.addEventListener("change", function(){
+				$outside.checked = !this.checked;
+				if (this.checked){
+					$lengthE.value = lengthE - strokeWidth/2;
+					$lengthB.value = lengthB - strokeWidth;
+					$lengthC.value = lengthC - strokeWidth;
+					$lengthD.value = lengthD - strokeWidth;
+					$lengthA.value = lengthA - strokeWidth/2;
+				}else{
+					$lengthE.value = lengthE;	
+					$lengthB.value = lengthB+strokeWidth;	
+					$lengthC.value = lengthC+strokeWidth;	
+					$lengthD.value = lengthD+strokeWidth;	
+					$lengthA.value = lengthA;	
+				}
+			}, false); 
+			
+			$outside.addEventListener("change", function(){
+				$inside.checked = !this.checked;
+				if (this.checked){
+					$lengthE.value = lengthE;	
+					$lengthB.value = lengthB+strokeWidth;	
+					$lengthC.value = lengthC+strokeWidth;	
+					$lengthD.value = lengthD+strokeWidth;	
+					$lengthA.value = lengthA;	  
+				}else{
+					$lengthE.value = lengthE - strokeWidth/2;
+					$lengthB.value = lengthB - strokeWidth;
+					$lengthC.value = lengthC - strokeWidth;
+					$lengthD.value = lengthD - strokeWidth;
+					$lengthA.value = lengthA - strokeWidth/2;
+				}
+			}, false);
+		</script> 
+		
+	</body>
+</html>

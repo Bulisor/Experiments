@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head> 
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">    
+		
+		<title>SmarTeam3D - 3D world closer to you| SmarTeam3D</title>
+		<meta name="description" content="3D world closer to you | car/character customization,real reproduction of objects,from simple to complex animations,3D image and video rendering">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />    
+		<meta name="keywords"  content="3d,webgl,rendering,animation,modeling, games" />
+		
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="theme-color" content="#ffffff">
+		 
+		<style>
+			html, body {
+				margin: 0; 
+				padding: 0;
+			} 
+			#canvas {
+				height: 400px; width: 500px; background-color: rgba(255,255,255,0); border:1px solid blue;
+			} 
+		</style>
+		
+		<script src="https://code.jquery.com/jquery.js"></script>  
+		<script src="./paper.js"></script> 
+	</head>  
+	<body>   
+		<div>
+			<button><a href="./2dShapes.html">U-Profile</a></button>
+			<button><a href="./2dShapesL.html" target="_blank">L-Profile</a></button>
+			<button><a href="./2dShapesC.html" target="_blank">C-Profile</a></button>
+			<button><a href="./2dShapesZ.html" target="_blank">Z-Profile</a></button>
+			<button><a href="./2dShapesO.html" target="_blank">O-Profile</a></button>
+			<button><a href="./2dShapesCSM.html" target="_blank">CSM-Profile</a></button>
+		</div>
+		<canvas id="canvas"></canvas> 		
+		<div class="menu" id="menu">
+			<label class="switch">
+			  <input type="checkbox" id="inside" checked/> 
+			  <span class="inside">Inside</span>
+			</label>
+			<label class="switch">
+			  <input type="checkbox" id="outside"/>
+			  <span class="inside">Outside</span>
+			</label> 
+			<div class="length">
+				<label class="switch">
+					<span class="inside">A:</span>
+					<input id="lengthA" type="text" name="lengthA" value="50"  >
+				</label>
+			</div>
+			<div class="others">
+				<label class="switch">
+					<span class="inside">thickness</span>
+					<input id="stroke" type="text" name="stroke" value="5" >
+				</label>
+				<label class="switch">
+					<button id="zoomin" type="text" name="zoomin">Zoom in</button>
+				</label>
+				<label class="switch">
+					<button id="zoomout" type="text" name="zoomout">Zoom out</button>
+				</label>
+				<label class="switch">
+					<button id="rotate" type="text" name="rotate">Rotate +90</button>
+				</label>
+				<label class="switch">
+					<button id="addExtra" type="text" name="addExtra">addExtra</button>
+				</label>
+				<label class="switch">
+					<button id="remExtra" type="text" name="remExtra">remExtra</button>
+				</label>
+			</div>
+		
+		</div> 
+		
+		<script type="text/paperscript" canvas="canvas">
+			
+			var profile = 7;
+			var strokeWidth = 5;
+			var dotRadius = 5;
+			
+			var infoOffset = 10;
+			var viewAngle = 0;
+			var lastPoint;  
+			
+			var extra = 0;
+		
+			var alphabet = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+			var lengths = [52.5];
+			var angles = []; 
+			var points = [];
+			var shapes = [];
+			var corners = [];
+			var groups = [];
+			var AInfo = [];
+			var LInfo = [];
+			var count = 1;
+			var htmlElem = [];
+			var inside = true;
+			
+			function draw(profile)
+			{
+				draw_Custom();
+				view.zoom /=1.4;
+				
+				//for resize
+				lastPoint= view.center; 
+			}
+			
+			function draw_Custom(){
+				points = [];
+				points[0] = new Point(0, 0);
+				for(var i=0;i<count;i++)
+				{
+					if(typeof lengths[i] == 'undefined') lengths[i] = 0;
+					if(i>0 && typeof angles[i-1] == 'undefined') angles[i-1] = 0;
+					
+					points[(i*2+1)] = new Point(points[(i>0?i*2-1:i)].x + lengths[i], 0);
+					points[(i*2+2)] = new Point(points[(i>0?i*2-1:i)].x + lengths[i]/2, 0);
+				} 
+				
+				if(count<lengths.length)
+					lengths.splice(count, 1);
+				 
+				for(var i=0;i<lengths.length;i++)
+				{ 
+					shapes[i] = drawShapes(points[i*2+2], new Point(lengths[i], strokeWidth), 'rect');
+				}
+				
+				if(count<shapes.length)
+					shapes.splice(count, 1);
+				
+				for(var i=0;i<shapes.length;i++){ 
+					LInfo[i] = drawInfos(new Point(points[i*2+2].x, infoOffset), '#F7B328', alphabet[i]);
+				} 
+				
+				if(count<LInfo.length)
+					LInfo.splice(count, 1); 
+					
+				if(shapes.length>1){
+					for(var i=1;i<shapes.length;i++){ 
+						corners[i-1] = drawShapes(points[(i-1)*2+1], strokeWidth/2, 'circle');
+						AInfo[i-1] = drawInfos(new Point(points[(i-1)*2+1].x + infoOffset, - infoOffset), '#189AD2', parseInt(i));
+					}
+				}else{
+					corners = [];
+				}
+				
+				if(count == AInfo.length)
+					AInfo.splice(count-1, 1);
+					
+				if(count == angles.length)
+					angles.splice(count-1, 1);
+					
+				if(shapes.length>1 && corners.length>0){
+					for(var i=shapes.length - 1;i>0;i--)
+					{ 
+						if(typeof angles[i-1] == 'undefined') angles[i-1] = 0;
+						if(i==(shapes.length - 1)){
+							groups[i-1] = new Group(shapes[i], corners[i-1], LInfo[i], AInfo[i-1]);
+							setting_group(groups[i-1], points[(i-1)*2+1], -180 + angles[i-1], -180 - angles[i-1]);
+						}else{
+							groups[i-1] = new Group(shapes[i], corners[i-1], LInfo[i], AInfo[i-1], groups[i]);
+							setting_group(groups[i-1], points[(i-1)*2+1], -180 + angles[i-1], -180 - angles[i-1]);
+						}
+					}
+				}else{
+					groups = [];
+				} 
+				
+				if(count == groups.length)
+					groups.splice(count-1, 1);
+				
+				var mainGroup = new Group(shapes[0], LInfo[0]); 
+				for(var i=0;i<groups.length;i++){
+					mainGroup.addChild(groups[i]);
+				}
+				
+				//fit to canvas
+				mainGroup.fitBounds(view.bounds);
+			}
+			
+			function setting_group(grup, pivot, angle1, angle2){
+				grup.pivot = pivot;
+				grup.rotate(angle1);
+				grup.children[2].rotate(angle2); 
+				grup.children[3].rotate(angle2); 
+			} 
+			
+			function drawShapes(center, radiuSize, form){
+				var shape;
+				if(form == 'circle'){
+					shape = new Path.Circle({
+								center    : center,
+								radius    : radiuSize,
+								fillColor : 'black'
+							});
+				}else{
+					shape = new Path.Rectangle({
+								center    : center,
+								size      : radiuSize,
+								fillColor : 'black'
+							});
+				}
+				return shape;
+			}
+			
+			function drawInfos(point, fillC, text){
+				var dot = new Path.Circle({
+					center    : point,
+					radius    : dotRadius,
+					fillColor : fillC
+				});
+				
+				var text = new PointText({
+					point: point,
+					content: text,
+					fillColor: 'white',
+					font: 'Arial' 
+				});
+				text.fitBounds(dot.bounds.scale(0.7));
+				
+				return new Group(dot, text);  
+			}
+			
+			function drawCanvas(){
+				project.clear();
+				draw(profile);
+			}
+			
+			drawCanvas();
+		
+			view.onMouseDrag = function(event){  
+				view.rotate(event.point.subtract(view.center).angle/Math.PI);
+			} 
+				
+			function onMouseWheel(event){
+				var delta = 0;
+				if ( event.wheelDelta )  // WebKit / Opera / Explorer 9
+					delta = event.wheelDelta;
+				else if ( event.detail )  // Firefox
+					delta = - event.detail;
+				if (delta > 0) { // Scroll up
+					view.zoom /= Math.pow( 0.95, 1 );
+				} else { 
+					view.zoom *= Math.pow( 0.95, 1 ); 
+				}
+			} 
+			
+			function onResize(event) {
+				view.scrollBy(lastPoint.subtract(view.center));
+				lastPoint = view.center; 
+			}
+			
+			//zoom events
+			document.getElementById('canvas').addEventListener( 'mousewheel', onMouseWheel, false );
+			document.getElementById('canvas').addEventListener( 'DOMMouseScroll', onMouseWheel, false );
+			
+			refreshJS();
+			 
+			function refreshJS(){
+				//inputs events
+				var $inside = document.getElementById('inside');
+				var $outside = document.getElementById('outside');
+				var $lengthA = document.getElementById('lengthA');
+				var $stroke = document.getElementById('stroke');
+				var $zoomin = document.getElementById('zoomin');
+				var $zoomout = document.getElementById('zoomout');
+				var $rotate = document.getElementById('rotate'); 
+				
+				var $addExtra = document.getElementById('addExtra');
+				var $remExtra = document.getElementById('remExtra');
+
+				$zoomin.onclick = function() { view.zoom /= Math.pow( 0.95, 1 ); }
+				
+				$zoomout.onclick = function() { view.zoom *= Math.pow( 0.95, 1 ); }
+				
+				$rotate.onclick = function() {
+					
+					viewAngle = (viewAngle == 3)?0:viewAngle++;
+					view.rotation = 0;
+					switch(viewAngle){
+						case 0:
+							view.rotate(0, view.center);
+							break;
+						case 1:
+							view.rotate(90, view.center);
+							break;
+						case 2:
+							view.rotate(-180, view.center);
+							break;
+						case 3: 
+							view.rotate(-90, view.center);
+							break;
+					}
+				}
+				
+				$addExtra.onclick = function() {
+					if(count == alphabet.length){alert("No more"); return;}
+					count++;  
+					drawCanvas();
+					addHTML();
+				}
+				
+				$remExtra.onclick = function() { 
+					if(count == 1){alert("No more"); return;}
+					count--; 
+					drawCanvas();
+					removeHTML();
+				}
+				
+				$stroke.addEventListener("keyup", function(){
+					strokeWidth = parseFloat(this.value);
+					$lengthA.value = (inside==true ? lengths[0]-strokeWidth/2 : lengths[0]);
+					for(var i=1;i<htmlElem.length;i+=2){
+						htmlElem[i-1].value = lengths[i] - strokeWidth/2;
+					} 
+					drawCanvas(); 
+				}, false);
+			
+				$inside.addEventListener("change", function(){
+					$outside.checked = !this.checked;
+					inside = this.checked; 
+					var dates = $('*[id^="length"]');
+					
+					if (this.checked){ 
+						for(var i=0;i<dates.length;i++){
+							dates[i].value = lengths[i] - strokeWidth/2; 
+						}
+					}else{
+						for(var i=0;i<dates.length;i++){
+							dates[i].value = lengths[i]; 
+						}
+					}
+				}, false); 
+				
+				$lengthA.addEventListener("keyup", function(){
+					lengths[0] = (inside==true ? parseFloat(this.value)+strokeWidth/2 : parseFloat(this.value));
+					drawCanvas(); 
+				}, false);
+			
+				$outside.addEventListener("change", function(){
+					$inside.checked = !this.checked;
+					inside = !this.checked;
+					var dates = $('*[id^="length"]');
+					
+					if (this.checked){ 
+						for(var i=0;i<dates.length;i++){
+							dates[i].value = lengths[i]; 
+						}
+					}else{
+						for(var i=0;i<dates.length;i++){
+							dates[i].value = lengths[i] - strokeWidth/2; 
+						} 
+					} 
+				}, false);
+			}
+					
+			function addHTML(){
+				var html = '<div class="extra" id="extra_'+(count-1)+'">'+ 
+								'<label class="switch"> '+
+									'<span class="inside">'+alphabet[(count-1)]+':</span>'+
+									'<input id="length'+alphabet[(count-1)]+'" type="text" name="length'+alphabet[(count-1)]+'" value="0" >'+
+								'</label> '+
+								'<label class="switch">'+
+									'<span class="inside">'+(count-1)+':</span>'+
+									'<input id="angle'+(count-1)+'" type="text" name="angle'+(count-1)+'" value="0" >'+
+								'</label>'+
+							'</div>';
+				$('#menu').append(html);
+				htmlElem.push(document.getElementById("length"+alphabet[(count-1)]));
+				htmlElem.push(document.getElementById("angle"+(count-1))); 
+				
+				htmlElem[htmlElem.length-2].addEventListener("keyup", function(){
+					lengths[Object.keys(alphabet)[Object.values(alphabet).indexOf(this.getAttribute("id").split("length")[1])]] = (inside==true ? parseFloat(this.value)+strokeWidth/2 : parseFloat(this.value));
+					drawCanvas(); 
+				}, false);
+			 
+				htmlElem[htmlElem.length-1].addEventListener("keyup", function(){
+					angles[this.getAttribute("id").split("angle")[1]-1] = parseFloat(this.value);
+					drawCanvas();  
+				}, false);
+				refreshJS();
+			}
+			
+			function removeHTML(){
+				document.getElementById('menu').removeChild(document.getElementById('extra_'+count));
+				htmlElem.splice(htmlElem.length-2,2); 
+			}
+		</script> 
+		
+	</body>
+</html>

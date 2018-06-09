@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Scatter Plot</title>
+<style>
+    body {
+      margin: 0;
+			padding: 10px;
+			background-color: #000;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    svg {
+      position: absolute;
+      background-color: transparent;
+      float: left;
+      fill: #fff;
+    }
+
+  #webglviewer {
+    bottom: 100;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .menu{
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	color: white;
+	display: grid;
+  }
+</style>
+</head>
+<body>
+<svg></svg>
+<div id="webglviewer"></div>
+<script src="js/third-party/d3.js"></script>
+<script src="js/third-party//d3-legend.js"></script>
+<script src="js/third-party/three.js"></script>
+<script src="js/third-party/StereoEffect.js"></script>
+<script src="js/third-party/DeviceOrientationControls.js"></script>
+<script src="js/third-party/OrbitControls.js"></script>
+<script src="js/third-party/ParametricGeometries.js"></script>
+<script src="js/third-party/dat.gui.min.js"></script>
+<script src="js/util.js"></script>
+<script src="js/grid.js"></script>
+<script src="js/legend.js"></script>
+<script src="js/3d-scplot-main.js"></script>
+
+<script src="js/plotsClass.js"></script>
+<script>
+		var scene, whichplot, parameters;
+		var data, labels, scales;
+
+		// global variables for dat.gui
+		var guiCategory, guiGroup, guiSizeType, guiShape, guiOverlap;
+
+		// create the 3d scene, one time.
+		function createScene()
+		{
+			var gui = new dat.GUI();
+
+			parameters =
+			{
+				data: "Trump",
+				type: "Scatterplot",
+				category: "Color",
+				grouped: false,
+				sizeType: "No_of_Tweets_Color",
+				Xaxis: "Month",
+				Yaxis: "Retweet",
+				Zaxis: "Fav",
+				shape: true,
+				remOverlaps: false
+			};
+
+			// change input data
+			var inputData = gui.add( parameters, 'data', ["Trump", "Hillary"] ).name('Input Data').listen();
+			inputData.onChange(function(value) {
+				updateScene();
+			});
+
+			// change plot type
+			var type = gui.add( parameters, 'type', ["Scatterplot", "Bar_Chart", "Surface_Area"] ).name('Plot Type').listen();
+			type.onChange(function(value) {
+				updateScene();
+				switch(value){
+					case "Scatterplot":
+						updateDatDropdown(guiCategory , ["Color", "Position", "Size"]);
+						// updateDatDropdown(guiCategory , ["Color", "Position", "Shape", "Size"]);
+
+						if(guiGroup)
+						{
+							guiGroup.remove();
+							guiGroup = null;
+
+							guiOverlap.remove();
+							guiOverlap = null;
+						}
+						break;
+					case "Bar_Chart":
+						if(parameters.category == "Shape")
+							parameters.category = "Color";
+						updateDatDropdown(guiCategory , ["Color", "Position", "Size"]);
+
+						if(!guiGroup)
+						{
+							guiGroup = gui.add( parameters, 'grouped' ).name('Grouped').listen();
+							guiGroup.onChange(function(value) {
+								updateScene();
+							});
+
+							guiOverlap = gui.add( parameters, 'remOverlaps' ).name('Remove Overlaps').listen();
+							guiOverlap.onChange(function(value) {
+								updateScene();
+							});
+						}
+						break;
+					case "Surface_Area":
+						if(parameters.category == "Size" || parameters.category == "Shape")
+							parameters.category = "Color";
+						updateDatDropdown(guiCategory , ["Color", "Position"]);
+
+						if(guiGroup)
+						{
+							guiGroup.remove();
+							guiGroup = null;
+
+							guiOverlap.remove();
+							guiOverlap = null;
+						}
+						break;
+				}
+			});
+
+			// change plot category
+			guiCategory = gui.add( parameters, 'category', ["Color", "Position", "Size"] ).name('Plot Category').listen();
+			// guiCategory = gui.add( parameters, 'category', ["Color", "Position", "Shape", "Size"] ).name('Plot Category').listen();
+			guiCategory.onChange(function(value) {
+				updateScene();
+				if(guiSizeType)
+				{
+					guiSizeType.remove();
+					guiSizeType = null;
+				}
+				if(guiShape)
+				{
+					guiShape.remove();
+					guiShape = null;
+				}
+				if(value == "Size")
+				{
+					if(!guiSizeType)
+					{
+						guiSizeType = gui.add( parameters, 'sizeType', ["No_of_Tweets_Color", "No_of_Tweets_NoColor", "Sentiment"] ).name('Input Data').listen();
+						guiSizeType.onChange(function(value) {
+							updateScene();
+						});
+					}
+				}
+				if(value == "Shape")
+				{
+					if(!guiShape)
+					{
+						guiShape = gui.add( parameters, 'shape' ).name('Shape').listen();
+						guiShape.onChange(function(value) {
+							updateScene();
+						});
+					}
+				}
+
+			});
+
+			// change plot x axis
+			var Xaxis = gui.add( parameters, 'Xaxis', ["Month", "Retweet", "Fav", "Polarity", "Tweets", "Sentiment"] ).name('X Axis').listen();
+			Xaxis.onChange(function(value) {
+				updateScene();
+			});
+
+			// change plot y axis
+			var Yaxis = gui.add( parameters, 'Yaxis', ["Month", "Retweet", "Fav", "Polarity", "Tweets", "Sentiment"] ).name('Y Axis').listen();
+			Yaxis.onChange(function(value) {
+				updateScene();
+			});
+
+			// change plot z axis
+			var Zaxis = gui.add( parameters, 'Zaxis', ["Month", "Retweet", "Fav", "Polarity", "Tweets", "Sentiment"] ).name('Z Axis').listen();
+			Zaxis.onChange(function(value) {
+				updateScene();
+			});
+
+			gui.open();
+			updateScene();
+		}
+
+		// update dat.gui dropdown, hide/show elements
+		function updateDatDropdown(target, list)
+		{
+			innerHTMLStr = "";
+			if(list.constructor.name == 'Array'){
+				for(var i=0; i<list.length; i++){
+					var str = "<option value='" + list[i] + "'>" + list[i] + "</option>";
+					innerHTMLStr += str;
+				}
+			}
+
+			if(list.constructor.name == 'Object'){
+				for(var key in list){
+					var str = "<option value='" + list[key] + "'>" + key + "</option>";
+					innerHTMLStr += str;
+				}
+			}
+			if (innerHTMLStr != "") target.domElement.children[0].innerHTML = innerHTMLStr;
+		}
+
+		// remove current plot if exist, and create a new one,
+		// each time when you change dat.gui
+		function updateScene()
+		{
+			emptyScene();
+
+			//create new 3d plot
+			d3.csv(parameters.data+".csv", function (rawData) {
+				data   = getData(rawData);
+				scales = getScales(data);
+				labels = getLabels(data, scales);
+
+				var param = {};
+				param = {
+						'x':parameters.Xaxis,
+						'y':parameters.Yaxis,
+						'z':parameters.Zaxis,
+						'sizeType':parameters.sizeType,
+						'grouped':parameters.grouped,
+						'shape':parameters.shape,
+						'data':parameters.data,
+						'remOverlaps':parameters.remOverlaps
+					};
+
+				// what function is used to draw the plot
+				whichplot = Plots["plot_"+parameters.category+"_"+parameters.type];
+				// parse usefull params to used function from dat.gui
+				// we used the same function foreach category and type,
+				// it doesn't matter if there are different axis, or they are grouped, ordered
+				init(whichplot, param);
+			});
+		}
+
+		// empty scene
+		function emptyScene()
+		{
+			if(scene)
+			{
+				scene.traverse( function ( object ) {
+					if ( object.geometry ) object.geometry.dispose();
+					if ( object.material ) object.material.dispose();
+				});
+			}
+		}
+
+		createScene();
+	</script>
+</body>
+</html>

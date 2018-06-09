@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head> 
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">    
+		
+		<title>SmarTeam3D - 3D world closer to you | SmarTeam3D</title>
+		<meta name="description" content="3D world closer to you | object/character customization, real reproduction of objects, from simple to complex animations, 3D image and video rendering, WebGl technology, augmented reality" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />    
+		<meta name="keywords"  content="3d, webgl, rendering, 3d animation, 3d modeling, 3d games, WebGl, augmented reality, ar, virtual tour, 3d training, 3d video, 3d graphics" />
+		
+		<meta name="msapplication-TileColor" content="#ffffff" />
+		<meta name="theme-color" content="#ffffff" />
+		 
+		<script src="https://code.jquery.com/jquery.js"></script>  
+		<script src="https://code.jquery.com/pep/0.4.3/pep.min.js"></script>  
+		<script src="./babylon.v3.1.min.js"></script> 
+
+		<style>
+			html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, center, canvas {
+				margin: 0;
+				padding: 0;
+				border: 0;
+				font-size: 100%;
+				font: inherit;
+				vertical-align: middle;
+			}
+			#webGLwarning{
+				display: none; position: absolute;font-weight: bold;z-index: 100;  left: 24.3em; color: white; top: 4px;
+			}
+			#canvas{
+				height:40vw; width: 40vw; background-color: rgba(255,255,255,0); z-index: 4; touch-action : none; -ms-touch-action : none; border:1px solid maroon;
+			} 
+			#fpsLabel{
+				position:absolute; z-index:99;right:10px;top:10px; border-radius:7px; border:1.5px solid white;padding:5px;color:white;
+			}
+			.menu{
+				margin: 0 20px;border:1px solid maroon; 
+			}
+		</style>
+		
+	</head> 
+	<body style="display:flex;">    
+		<div class="webgl">
+			<canvas id="canvas" style="touch-action:none" touch-action="none"></canvas> 
+			<div id="fpsLabel"></div>  
+			<div id="webGLwarning">WebGL is not supported or it is disable on your browser! :(</div> 
+		</div>
+		<div class="menu">
+			<p>
+				<span>Length:</span>
+				<input type="text" id="lengthText" value="300" size="5" onkeyup="updateTextInput('lengthText',this.value);"/>
+			</p>
+			<p>
+				<span>LengthA:</span>
+				<input type="text" id="lengthAText" value="40" size="5" onkeyup="updateTextInput('lengthAText',this.value);"/>
+			</p>
+			<p>
+				<span>LengthB:</span>
+				<input type="text" id="lengthBText" value="40" size="5" onkeyup="updateTextInput('lengthBText',this.value);"/>
+			</p>
+			<p>
+				<span>Thickness:</span>
+				<input type="text" id="thicknessText" value="1.5" size="5" onkeyup="updateTextInput('thicknessText',this.value);"/>
+			</p>
+			<p>
+				<span>Side:</span>
+				<select id="side">
+					<option value="1">A</option>
+					<option value="2">B</option>
+				</select>
+			</p>
+			<p>
+				<span>Form:</span>
+				<select id="form" onchange="myFunction()">
+					<option value="1">Round</option>
+					<option value="2">Rectangle</option>
+					<option value="3">Angle Tilt</option>
+					<option value="4">Round Rectangle</option>
+				</select>
+			</p>
+			<div id="radiusXY">
+				<p><span>Radius:</span>
+				<input type="text" id="radiusText" value="1" size="5" onkeyup="updateTextInput('radiusText',this.value);"/>
+				</p>
+				<p><span>X:</span>
+				<input type="text" id="XText" value="1" size="5" onkeyup="updateTextInput('XText',this.value);"/>
+				</p>
+				<p><span>Y/Z:</span>
+				<input type="text" id="YText" value="0" size="5" onkeyup="updateTextInput('YText',this.value);"/>
+				</p>
+			</div>
+			<div id="LlXY" style="display:none;">
+				<p><span>Width:</span>
+				<input type="text" id="widthText" value="1" size="5" onkeyup="updateTextInput('widthText',this.value);"/>
+				</p>
+				<p><span>Height:</span>
+				<input type="text" id="heightText" value="1" size="5" onkeyup="updateTextInput('heightText',this.value);"/>
+				</p>
+				<p><span>X:</span>
+				<input type="text" id="LXText" value="1" size="5" onkeyup="updateTextInput('LXText',this.value);"/>
+				</p>
+				<p><span>Y/Z:</span>
+				<input type="text" id="lYText" value="0" size="5" onkeyup="updateTextInput('lYText',this.value);"/>
+				</p>
+			</div>
+			<div id="LlCorner" style="display:none;">
+				<p><span>Width:</span>
+				<input type="text" id="width2Text" value="1" size="5" onkeyup="updateTextInput('width2Text',this.value);"/>
+				</p>
+				<p><span>Height:</span>
+				<input type="text" id="height2Text" value="1" size="5" onkeyup="updateTextInput('height2Text',this.value);"/>
+				</p>
+				<p><span>Corner:</span>
+				<input type="text" id="CornerText" value="0.5" size="5" onkeyup="updateTextInput('CornerText',this.value);"/>
+				</p>
+				<p><span>X:</span>
+				<input type="text" id="LX2Text" value="1" size="5" onkeyup="updateTextInput('LX2Text',this.value);"/>
+				</p>
+				<p><span>Y/Z:</span>
+				<input type="text" id="lY2Text" value="0" size="5" onkeyup="updateTextInput('lY2Text',this.value);"/>
+			</div>
+			<div id="RLlCorner" style="display:none;">
+				<p><span>Height:</span>
+				<input type="text" id="height3Text" value="1" size="5" onkeyup="updateTextInput('height3Text',this.value);"/>
+				</p>
+				<p><span>Radius:</span>
+				<input type="text" id="Radius2Text" value="1" size="5" onkeyup="updateTextInput('Radius2Text',this.value);"/>
+				</p>
+				<p><span>X:</span>
+				<input type="text" id="LX3Text" value="1" size="5" onkeyup="updateTextInput('LX3Text',this.value);"/>
+				</p>
+				<p><span>Y/Z:</span>
+				<input type="text" id="lY3Text" value="0" size="5" onkeyup="updateTextInput('lY3Text',this.value);"/>
+			</div>
+			<button id="button">Add</button> 
+		</div>
+	    <script type="text/javascript" src="./index.js"></script>  
+	</body>
+</html>
