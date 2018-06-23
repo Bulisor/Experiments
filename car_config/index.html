@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head> 
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">    
+		
+		<title>SmarTeam3D - 3D world closer to you | SmarTeam3D</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta name="description" content="">
+
+		<script src="https://code.jquery.com/jquery.min.js"></script>
+		<script src="https://code.jquery.com/pep/0.4.3/pep.min.js"></script>
+		<script src="./babylon.v3.3.beta.min.js"></script>
+		<script src="./babylon.gui.min.js"></script>		<script src="./Control.js"></script>
+		<script src="./Car.js"></script>
+		<script src="./Manager.js"></script> 
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="./style.css" />
+	</head>
+	<body>
+		<canvas id="canvas" touch-action="none"></canvas>
+		<div id="fpsLabel"></div>
+		<div id="content" style="display:none;">
+			<div class="header_click">
+				<i class="fa fa3 fa-chevron-circle-right"></i>
+			</div>
+			<div class="top_banner">
+				<div class="topdivs1">
+					<img src="./logoh.png" alt="logo" height="40" width="160" style="margin:5px auto;display:block;"/>
+				</div>
+				<div class="topdivs2" style="text-align:center;">
+					<a href="https://www.smarteam3d.com" class="fa fa3 fa-home" title="Home"></a>
+					<i id="menu" class="fa fa3 fa-bars" title="Menu"></i>
+					<i id="info" class="fa fa3 fa-info-circle" title="Details"></i>
+					<i id="about" class="fa fa3 fa-question-circle" title="About"></i>
+					<i id="sound" class="fa fa3 fa-volume-up" title="Sound"></i> 
+					<i id="tablet" class="fa fa3 fa-tablet" title="Tablet" style="color:#7a7a7a;cursor:auto;"></i>
+					<i id="fullscreen" class="fa fa3 fa-expand" title="Fullscreen"></i>
+					<img id="vr" class="img_vr" src="./vr.png" alt="vr" height="40" width="40" title="VR" style="cursor:auto;opacity:0.5;"/>
+				</div>
+				<div style="clear:both"></div>
+			</div> 
+			
+			<div class="footer_click" style="bottom:8px;">
+				<i class="fa fa3 fa-chevron-circle-right"></i>
+			</div>
+			<div class="bottom_banner">
+				<div class="topdivs2" style="text-align:center;">
+					Copyright &copy; SmarTeam3D 
+					<script> 
+					var year = new Date().getFullYear();
+					document.write(year);
+					</script>
+				</div>
+				<div class="topdivs1">
+					<span>Follow Us:</span>
+					<a href="https://www.facebook.com/SmarTeam3D" class="fa fa4 fa-facebook" title="Facebook"></a>
+					<a href="https://www.youtube.com/channel/UC99BoLYeomoBYe_x4QhLNnw" class="fa fa4 fa-youtube-play" title="Youtube"></a>
+					<a href="https://twitter.com/SmarTeam3D" class="fa fa4 fa-twitter" title="Twitter"></a>
+				</div>
+			</div>
+			
+			<div class="menu" style="text-align:left;"></div>
+			<div class="info">
+				<p><b>3D Car Configurator</b></p>
+			</div>
+			<div class="about" style="right:0px; min-width: 200px;">
+				<p>
+					<span>Produced by:&nbsp;</span> 
+					<span style="float:right;"><a href="https://www.smarteam3d.com" target="_blank">SmarTeam3D</a></span>
+				</p>
+				<p>
+					<span>3D Artist:&nbsp;</span>
+					<span style="float:right;"><a href="#" target="_blank">Loredana Zavalszki</a></span> 
+				</p>
+				<p>
+					<span>Car Model:&nbsp;</span>
+					<span style="float:right;"><a href="https://free3d.com/3d-model/mercedes-benz-sls-53003.html" target="_blank">Mercedes Benz SLS</a></span>
+				</p>
+				<p>
+					<span>Powered by:&nbsp;</span>
+					<span style="float:right;"><a href="https://www.babylonjs.com" target="_blank">BabylonJS</a></span>
+				</p>
+			</div>
+		</div>
+		<div id="loader" style= "display:none;">
+			<a href="https://www.smarteam3d.com" class="logo" title="Logo"></a>
+			<div id="loading" style=""></div>
+			<div class="follow">
+				<div style="font-size: 18px;">Follow Us:</div>
+				<a href="https://www.facebook.com/SmarTeam3D" class="fa fa-facebook" title="Facebook"></a>
+				<a href="https://www.youtube.com/channel/UC99BoLYeomoBYe_x4QhLNnw" class="fa fa-youtube-play" title="Youtube"></a>
+				<a href="https://twitter.com/SmarTeam3D" class="fa fa-twitter" title="Twitter"></a>
+			</div>
+		</div>
+		<div id="error" style= "display:none;">
+			<a href="https://www.smarteam3d.com" class="logo" title="Logo"></a>
+			<div style="font-size: 18px;">WebGL is not supported or it is disable on your browser!:(</div>
+			<div style="font-size: 18px;">Please check <a href="http://webglreport.com/" target="_blank">here</a>.</div>
+			<div class="follow">
+				<a href="https://www.facebook.com/SmarTeam3D" class="fa fa-facebook" title="Facebook"></a>
+				<a href="https://www.youtube.com/channel/UC99BoLYeomoBYe_x4QhLNnw" class="fa fa-youtube-play" title="Youtube"></a>
+				<a href="https://twitter.com/SmarTeam3D" class="fa fa-twitter" title="Twitter"></a>
+			</div>
+		</div>
+		<script src="./index.js"></script>
+	</body>
+</html>
