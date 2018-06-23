@@ -26,17 +26,18 @@
 			</div>
 			<div class="top_banner">
 				<div class="topdivs1">
-					<img src="./logoh.png" alt="logo" height="40" width="160" style="margin:5px auto;display:block;"/>
+					<img src="./logo.png" alt="logo" height="40" width="160" style="margin:5px auto;display:block;"/>
 				</div>
-				<div class="topdivs2" style="text-align:center;">
+				<div class="topdivs2" style="text-align:right;">
 					<a href="https://www.smarteam3d.com" class="fa fa3 fa-home" title="Home"></a>
 					<i id="menu" class="fa fa3 fa-bars" title="Menu"></i>
-					<i id="info" class="fa fa3 fa-info-circle" title="Details"></i>
-					<i id="about" class="fa fa3 fa-question-circle" title="About"></i>
+					<i id="info" class="fa fa3 fa-question-circle" title="Controls"></i>
+					<i id="about" class="fa fa3 fa-info-circle" title="About"></i>
 					<i id="sound" class="fa fa3 fa-volume-up" title="Sound"></i> 
-					<i id="tablet" class="fa fa3 fa-tablet" title="Tablet" style="color:#7a7a7a;cursor:auto;"></i>
 					<i id="fullscreen" class="fa fa3 fa-expand" title="Fullscreen"></i>
-					<img id="vr" class="img_vr" src="./vr.png" alt="vr" height="40" width="40" title="VR" style="cursor:auto;opacity:0.5;"/>
+					<i id="tablet" class="fa fa3 fa-tablet" title="Tablet"></i>
+					<i id="vr" class="fa fa3 fa-simplybuilt" title="VR" style="transform: rotate(180deg);"></i>
+					<i id="ar" class="fa fa3 fa-video-camera" title="AR"></i>
 				</div>
 				<div style="clear:both"></div>
 			</div> 
@@ -60,11 +61,45 @@
 				</div>
 			</div>
 			
-			<div class="menu" style="text-align:left;"></div>
-			<div class="info">
-				<p><b>3D Car Configurator</b></p>
+			<div class="menu" style="max-height: 130px;">
+				<p>
+					<i class="fa fa4 fa-bars" title="Controls"></i>
+					<span><b>Modes</b></span>
+				</p>
+				<br/>
+				<div class="mods" onclick="Manager.setting_mode(1)">Free Mode</div>
+				<div class="mods" onclick="Manager.setting_mode(2)">Drive Mode</div>
+				<div class="mods" onclick="Manager.setting_mode(3)">Cinematic Mode</div>
 			</div>
-			<div class="about" style="right:0px; min-width: 200px;">
+			<div class="info" style="max-height: 300px;">
+				<p>
+					<i class="fa fa4 fa-question-circle" title="Controls"></i>
+					<span><b>Controls</b></span>
+				</p>
+				<br/>
+				<p>Free Mode:</p>
+				<ul>
+					<li>Arrows/Mouse Drag - Camera orbit</li>
+					<li>Mouse Wheel - Camera zoom</li>
+					<li>Mouse Left - Select object</li>
+					<li>B - Change background image</li>
+				</ul>
+				<p>Drive Mode:</p>
+				<ul>
+					<li>Arrows - Movement</li>
+					<li>C - Change camera view</li>
+				</ul>
+				<p>Cinematic Mode:</p>
+				<ul>
+					<li>P - Take a screenshort</li>
+				</ul>
+			</div>
+			<div class="about" style="max-height: 130px;">
+				<p>
+					<i class="fa fa4 fa-info-circle" title="About"></i>
+					<span><b>3D Car Configurator</b></span>
+				</p>
+				<br/>
 				<p>
 					<span>Produced by:&nbsp;</span> 
 					<span style="float:right;"><a href="https://www.smarteam3d.com" target="_blank">SmarTeam3D</a></span>
