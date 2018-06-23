@@ -166,7 +166,7 @@ const Manager = {
 	importMesh () { 
 		const _this = this
 		BABYLON.SceneLoader.ImportMesh('', './car/', 'amg_pbr3.babylon', _this.scene, function (m,p,s) {
-			m[0].scaling = new BABYLON.Vector3(45,45,45)   
+			m[0].scaling = new BABYLON.Vector3(45, 45, 45)   
 			
 			const wheels = [m[3], m[5], m[2], m[4]]
 			var hdr = new BABYLON.HDRCubeTexture('./res/txt.hdr', _this.scene, 1024)
@@ -270,6 +270,44 @@ const Manager = {
 		// "BackgroundPlane" - pt vr
 		// this.backgrounds.push(carStart, carHorn, kinematicMusic)
 		// backgroundIndex
+		
+		 var sky = new BABYLON.Mesh.CreateSphere("sp", 256, 1600, this.scene);
+		 sky.position.y = 100;
+		 sky.scaling.x = 2
+		 sky.scaling.z = 2
+		 
+		 console.log(sky)
+		const _this = this
+		BABYLONX.ShaderBuilder.InitializeEngine();
+        var SB = BABYLONX.ShaderBuilder;
+        var SBP = BABYLONX.Shader.Print;
+		var ik = 0
+        var reflectPart = function(ref,nrm,scale,brk,x,y,z,bias){
+                ik++;
+          return 'vec3 new_nrm'+ik+' = '+nrm+';\
+                vec3 vr'+ik+' = normalize( refract(  normalize(camera -pos*3.141592*length(camera- pos)*'+SBP(scale)
+                +')  ,  new_nrm'+ik+', '+SBP(brk)+') ); \
+                float y'+ik+'= .5+  - atan( '+SBP(z)+'*vr'+ik+'.z,    '+SBP(x)+'*vr'+ik+'.x ) / (2.*3.141592);\
+                float p'+ik+'= 0.5  - atan( '+SBP(y)+'*vr'+ik+'.y, length( vr'+ik+'.xz ) ) / ( 3.141592);\
+                result = texture(  '+ref+', vec2( y'+ik+', p'+ik+') ,'+SBP(bias)+' );\
+                ';
+        };
+     
+        sky.material = new SB()
+        .Solid()
+        .Map({path:'./res/env4.jpg'})
+        .InLine( reflectPart('txtRef_0','nrm',0.02,-0.94,1.,1.,1.,0.0))
+            .VertexShader('\
+            \
+            nrm = normalize(pos);\
+             float pr = min(1.,max(0.,(-pos.y/830.) ));\
+            float pr2 = min(1.,max(0.,(-pos.y/530.-0.5) ));\
+            float pr3 = min(1.,max(0.,(-pos.y/1330. ) ));\
+             \
+            result = vec4(pos+vec3(0.,pr*420.,0.)+vec3(0.,pr2*210.,0.) +vec3(0.,pr3*70.,0.) ,1.);')
+        .Back()
+        .Front('discard;')
+        .BuildMaterial(this.scene);
 	},
 	
 	setKinematicAnimation () {
