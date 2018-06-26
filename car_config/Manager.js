@@ -292,7 +292,8 @@ const Manager = {
                 result = texture(  '+ref+', vec2( y'+ik+', p'+ik+') ,'+SBP(bias)+' );\
                 ';
         };
-     
+		// http://www.babylonjs-playground.com/#JUVAGS#6
+		// http://www.babylonjs-playground.com/#VE6GP#4
         sky.material = new SB()
         .Solid()
         .Map({path:'./res/env4.jpg'})
