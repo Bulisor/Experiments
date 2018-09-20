@@ -1,0 +1,134 @@
+<!DOCTYPE html> 
+<html lang="en">
+	<head> 
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">    
+		
+		<title>SmarTeam3D - 3D world closer to you | SmarTeam3D</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta name="description" content="">
+		
+		<script src="https://code.jquery.com/jquery.min.js"></script>   
+		<script src="https://code.jquery.com/pep/0.4.3/pep.min.js"></script>  
+		<script src="./babylon.v3.3.beta.min.js"></script>
+		<script src="./babylon.gui.min.js"></script>
+		<script src="./babylon.glTFFileLoader.js"></script> 
+ 
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="./style.css" />
+	</head>  
+	<body>      
+		<canvas id="canvas" touch-action="none"></canvas>
+		<div id="fpsLabel"></div>
+		<div id="content" style="display:none;">
+			<div class="header_click">
+				<i class="fa fa3 fa-chevron-circle-right"></i>
+			</div>
+			<div class="top_banner">
+				<div class="topdivs1">
+					<img src="./logo.png" alt="logo" height="40" width="160" style="margin:5px auto;display:block;"/>
+				</div>
+				<div class="topdivs2" style="text-align:right;">
+					<a href="https://www.smarteam3d.com" class="fa fa3 fa-home" title="Home"></a>
+					<i id="menu" class="fa fa3 fa-bars" title="Menu"></i>
+					<i id="info" class="fa fa3 fa-question-circle" title="Controls"></i>
+					<i id="about" class="fa fa3 fa-info-circle" title="About"></i>
+					<i id="sound" class="fa fa3 fa-volume-up" title="Sound"></i> 
+					<i id="fullscreen" class="fa fa3 fa-expand" title="Fullscreen"></i>
+					<i id="tablet" class="fa fa3 fa-tablet" title="Tablet"></i>
+					<i id="vr" class="fa fa3 fa-simplybuilt" title="VR" style="transform: rotate(180deg);"></i>
+					<i id="ar" class="fa fa3 fa-video-camera" title="AR"></i>
+				</div>
+				<div style="clear:both"></div>
+			</div> 
+			
+			<div class="footer_click" style="bottom:8px;">
+				<i class="fa fa3 fa-chevron-circle-right"></i>
+			</div>
+			<div class="bottom_banner">
+				<div class="topdivs2" style="text-align:center;">
+					Copyright &copy; SmarTeam3D 
+					<script> 
+					var year = new Date().getFullYear();
+					document.write(year); 
+					</script>
+				</div>
+				<div class="topdivs1">
+					<span>Follow Us:</span>
+					<a href="https://www.facebook.com/SmarTeam3D" class="fa fa4 fa-facebook" title="Facebook"></a>
+					<a href="https://www.youtube.com/channel/UC99BoLYeomoBYe_x4QhLNnw" class="fa fa4 fa-youtube-play" title="Youtube"></a>
+					<a href="https://twitter.com/SmarTeam3D" class="fa fa4 fa-twitter" title="Twitter"></a>
+				</div>
+			</div>
+			
+			<div class="menu" style="text-align:left;"></div>
+			<div class="info" style="max-height: 300px;">
+				<p>
+					<i class="fa fa4 fa-question-circle" title="Controls"></i>
+					<span><b>Controls</b></span>
+				</p>
+				<br/>
+				<p>Free Mode:</p>
+				<ul>
+					<li>Arrows/Mouse Drag - Camera orbit</li>
+					<li>Mouse Wheel - Camera zoom</li>
+					<li>Mouse Left - Select object</li>
+					<li>B - Change background image</li>
+				</ul>
+				<p>Drive Mode:</p>
+				<ul>
+					<li>Arrows - Movement</li>
+					<li>C - Change camera view</li>
+				</ul>
+				<p>Cinematic Mode:</p>
+				<ul>
+					<li>P - Take a screenshort</li>
+				</ul>
+			</div>
+			<div class="about" style="max-height: 130px;">
+				<p>
+					<i class="fa fa4 fa-info-circle" title="About"></i>
+					<span><b>3D Animated Character</b></span>
+				</p>
+				<br/>
+				<p>
+					<span>Produced by:&nbsp;</span> 
+					<span style="float:right;"><a href="https://www.smarteam3d.com" target="_blank">SmarTeam3D</a></span>
+				</p>
+				<p>
+					<span>3D Model:&nbsp;</span>
+					<span style="float:right;"><a href="https://www.highend3d.com/3d-model/bikini-woman-animated-3d-model" target="_blank">Woman Animated 3D Model</a></span> 
+				</p>
+				<p>
+					<span>Music:&nbsp;</span>
+					<span style="float:right;"><a href="https://www.youtube.com/watch?v=Q7gnkSg4if8" target="_blank">INNA - Nirvana</a></span> 
+				</p>
+				<p>
+					<span>Powered by:&nbsp;</span>
+					<span style="float:right;"><a href="https://www.babylonjs.com" target="_blank">BabylonJS</a></span>
+				</p>
+			</div>
+		</div>    
+		<div id="loader" style= "display:none;">
+			<a href="https://www.smarteam3d.com" class="logo" title="Logo"></a>
+			<div id="loading" style=""></div>
+			<div class="follow">
+				<div style="font-size: 18px;">Follow Us:</div>
+				<a href="https://www.facebook.com/SmarTeam3D" class="fa fa-facebook" title="Facebook"></a>
+				<a href="https://www.youtube.com/channel/UC99BoLYeomoBYe_x4QhLNnw" class="fa fa-youtube-play" title="Youtube"></a>
+				<a href="https://twitter.com/SmarTeam3D" class="fa fa-twitter" title="Twitter"></a>
+			</div>
+		</div>
+		<div id="error" style= "display:none;">
+			<a href="https://www.smarteam3d.com" class="logo" title="Logo"></a>
+			<div style="font-size: 18px;">WebGL is not supported or it is disable on your browser!:(</div>
+			<div style="font-size: 18px;">Please check <a href="http://webglreport.com/" target="_blank">here</a>.</div>
+			<div class="follow">
+				<a href="https://www.facebook.com/SmarTeam3D" class="fa fa-facebook" title="Facebook"></a>
+				<a href="https://www.youtube.com/channel/UC99BoLYeomoBYe_x4QhLNnw" class="fa fa-youtube-play" title="Youtube"></a>
+				<a href="https://twitter.com/SmarTeam3D" class="fa fa-twitter" title="Twitter"></a>
+			</div>
+		</div>
+		<script src="./index.js"></script>   
+	</body>
+</html>

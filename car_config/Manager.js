@@ -294,6 +294,7 @@ const Manager = {
         };
 		// http://www.babylonjs-playground.com/#JUVAGS#6
 		// http://www.babylonjs-playground.com/#VE6GP#4
+		// http://www.babylonjs-playground.com/#VE6GP#47
         sky.material = new SB()
         .Solid()
         .Map({path:'./res/env4.jpg'})
