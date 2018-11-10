@@ -1,6 +1,6 @@
 # Experiments
 
-Here is my short life as freelancer :)
+Here is my short life as developer :)
 And I have more demos, but no time to publish them :(
 
 The most important of them you'll find here:
