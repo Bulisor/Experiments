@@ -57,6 +57,10 @@ function init() {
 	
 	// add lights
 	addLights();
+
+	// add line light
+	addLine(false, 5);
+	addLine(true, 15);
 }
 
 function onWindowResize() {
@@ -86,6 +90,33 @@ function loadAssets() {
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function addLine (param, nrOfLights) {
+	var textureLoader = new THREE.TextureLoader();
+	lightText = textureLoader.load( "bulb.png");
+	var material = new THREE.SpriteMaterial( { map: lightText, color: 0xffffff } );
+	
+	var sprite = new THREE.Sprite( material );
+	if (param) {
+		sprite.position.set( 0, 1, -18 ); 
+	} else {
+		sprite.position.set( -18, 1, -15 );
+	}
+	
+	scene.add( sprite );
+	
+	for(var i = 0; i<nrOfLights; i++) {
+		var spotLight = new THREE.PointLight( 0xffffff, 1.5, 2, 1.8 );
+		if (param) {
+			spotLight.position.set( nrOfLights/2 - i*1.2, 0, -0.25 );
+		} else {
+			spotLight.position.set( -0.25, 0, nrOfLights/2 - i*1.2 );
+		}
+		
+		sprite.add( spotLight );
+	}
+	objects.push(sprite);
 }
 
 function addLights() {
